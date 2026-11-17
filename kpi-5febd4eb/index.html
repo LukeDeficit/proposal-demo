@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KPI Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F1628; --panel:#162038; --line:#24304d; --ink:#F4F6FB; --muted:#8C97B2;
+    --accent:#FF4713; --ok:#2BB673; --warn:#F5B700; --bad:#E5484D; --none:#3A4562;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;overflow:hidden}
+  body{display:flex;flex-direction:column;padding:1.6vw 2vw 1.2vw;gap:1.2vw}
+  header{display:flex;align-items:center;justify-content:space-between;gap:2vw}
+  .brand{display:flex;flex-direction:column;line-height:1}
+  .brand b{font-family:Poppins,sans-serif;font-weight:700;font-size:2.1vw;letter-spacing:.06em}
+  .brand span{font-family:Poppins,sans-serif;font-weight:600;font-size:.85vw;letter-spacing:.32em;color:var(--accent);margin-top:.35vw}
+  .stage{display:flex;align-items:center;gap:1vw;font-size:1vw;color:var(--muted)}
+  .stage .pill{background:var(--accent);color:#fff;font-family:Poppins,sans-serif;font-weight:600;padding:.35vw .9vw;border-radius:99px;font-size:1vw}
+  .clock{text-align:right}
+  .clock b{font-family:Poppins,sans-serif;font-size:2.1vw;font-weight:600;font-variant-numeric:tabular-nums}
+  .clock div{font-size:.8vw;color:var(--muted);margin-top:.2vw}
+  main{flex:1;display:grid;gap:1.6vw;min-height:0}
+  main.both{grid-template-columns:1.45fr 1fr}
+  main.one{grid-template-columns:1fr}
+  section{display:flex;flex-direction:column;min-height:0}
+  h2{font-family:Poppins,sans-serif;font-size:1.05vw;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.8vw;display:flex;justify-content:space-between}
+  h2 em{font-style:normal;color:var(--ink);letter-spacing:.05em}
+  .grid{flex:1;display:grid;gap:.8vw;min-height:0}
+  .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  .tile{background:var(--panel);border:1px solid var(--line);border-left:.45vw solid var(--none);border-radius:.6vw;padding:.9vw 1vw;display:flex;flex-direction:column;justify-content:space-between;min-height:0}
+  .tile.ok{border-left-color:var(--ok)} .tile.warn{border-left-color:var(--warn)} .tile.bad{border-left-color:var(--bad)}
+  .tile .n{font-size:.95vw;color:var(--muted);line-height:1.25}
+  .tile .v{font-family:Poppins,sans-serif;font-weight:700;font-size:2.9vw;line-height:1;font-variant-numeric:tabular-nums}
+  .tile .v small{font-size:1.2vw;font-weight:600;color:var(--muted);margin-left:.2vw}
+  .tile .t{gap:.5vw;display:flex;justify-content:space-between;align-items:center;font-size:.85vw;color:var(--muted)}
+  .tag{white-space:nowrap;flex-shrink:0;font-family:Poppins,sans-serif;font-weight:600;font-size:.72vw;letter-spacing:.1em;padding:.2vw .55vw;border-radius:99px;background:var(--none);color:#fff}
+  .ok .tag{background:var(--ok)} .warn .tag{background:var(--warn);color:#1b1b1b} .bad .tag{background:var(--bad)}
+  .nodata .v{color:var(--none)}
+  footer{display:flex;align-items:center;gap:1.4vw;font-size:.9vw;color:var(--muted);border-top:1px solid var(--line);padding-top:.9vw}
+  footer b{font-family:Poppins,sans-serif;color:var(--ink);font-weight:600;letter-spacing:.12em;font-size:.85vw}
+  .gate{display:flex;align-items:center;gap:.45vw}
+  .dot{width:.85vw;height:.85vw;border-radius:50%;border:.15vw solid var(--muted)}
+  .gate.done .dot{background:var(--ok);border-color:var(--ok)}
+  .gate.done{color:var(--ink)}
+  .err{position:fixed;bottom:.6vw;right:1vw;font-size:.75vw;color:var(--warn)}
+  @media (max-aspect-ratio: 4/3){ html,body{overflow:auto} main.both{grid-template-columns:1fr} .tile .v{font-size:7vw} .tile .n,.tile .t{font-size:2.6vw} .g3,.g4{grid-template-columns:repeat(2,1fr)} h2{font-size:2.6vw} .brand b{font-size:5vw} .brand span{font-size:2vw} .stage{display:none} .clock b{font-size:5vw} footer{flex-wrap:wrap;font-size:2.4vw} }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><b>INTERACTIVE</b><span>SUPPRESSION SYSTEMS</span></div>
+  <div class="stage"><span class="pill" id="stage">–</span><span id="stagegates"></span></div>
+  <div class="clock"><b id="time">--:--</b><div id="date"></div></div>
+</header>
+<main id="main"></main>
+<footer id="foot"></footer>
+<div class="err" id="err"></div>
+<script>
+const view = new URLSearchParams(location.search).get('view') || 'office';   // office | crew | director
+const fmt = (x, u) => x === null || x === undefined ? '–' : (Number.isInteger(x) ? x : x.toFixed(1)) + '';
+function status(k){
+  if (k.actual === null || k.actual === undefined) return 'nodata';
+  if (k.dir === 'info' || k.target === null) return 'info';
+  if (k.dir === 'min'){ if (k.actual >= k.target) return 'ok'; return k.actual >= k.target*0.9 ? 'warn' : 'bad'; }
+  const lim = k.target === 0 ? 1 : k.target*1.2;
+  if (k.actual <= k.target) return 'ok'; return k.actual <= lim ? 'warn' : 'bad';
+}
+const label = {ok:'ON TRACK', warn:'CLOSE', bad:'BEHIND', nodata:'NO DATA', info:''};
+function tile(k){
+  const s = status(k);
+  const tgt = k.target === null || k.target === undefined ? '' : (k.dir === 'max' ? 'Max ' : 'Min ') + fmt(k.target) + (k.unit||'');
+  return `<div class="tile ${s}${s==='nodata'?' nodata':''}">
+    <div class="n">${k.name}</div>
+    <div class="v">${fmt(k.actual)}${k.actual!==null&&k.actual!==undefined&&k.unit?`<small>${k.unit.trim()}</small>`:''}</div>
+    <div class="t"><span>${k.note ? k.note + ' · ' : ''}${tgt}</span>${label[s]?`<span class="tag">${label[s]}</span>`:''}</div>
+  </div>`;
+}
+function score(list){ const r = list.filter(k=>k.actual!==null&&k.actual!==undefined&&k.dir!=='info'); return r.length ? `${r.filter(k=>status(k)==='ok').length} / ${r.length} on track` : 'awaiting data'; }
+function sec(title, list, cls){ return `<section><h2>${title}<em>${score(list)}</em></h2><div class="grid ${cls}">${list.map(tile).join('')}</div></section>`; }
+function render(d){
+  const m = document.getElementById('main');
+  if (view === 'crew'){ m.className='one'; m.innerHTML = sec('Workforce KPIs', d.workforce, 'g4'); }
+  else if (view === 'director'){ m.className='both'; m.innerHTML = sec('Management KPIs', d.management, 'g3') + sec('Workforce KPIs', d.workforce.concat(d.director.map(k=>({...k,name:'Guardrail · '+k.name}))), 'g2'); }
+  else { m.className='both'; m.innerHTML = sec('Management KPIs', d.management, 'g3') + sec('Workforce KPIs', d.workforce, 'g2'); }
+  const done = d.stage.gates.filter(g=>g.done).length;
+  document.getElementById('stage').textContent = `${d.stage.name} · Stage ${d.stage.number} of ${d.stage.of}`;
+  document.getElementById('stagegates').textContent = `${done} of ${d.stage.gates.length} gates passed`;
+  document.getElementById('foot').innerHTML = `<b>NEXT STAGE GATES</b>` + d.stage.gates.map(g=>`<span class="gate${g.done?' done':''}"><span class="dot"></span>${g.name}</span>`).join('') + `<span style="margin-left:auto">Updated ${new Date(d.updated+'T00:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'})}</span>`;
+}
+async function load(){
+  try { const r = await fetch('data.json?t=' + Date.now(), {cache:'no-store'}); render(await r.json()); document.getElementById('err').textContent=''; }
+  catch(e){ document.getElementById('err').textContent = 'Offline – showing last data'; }
+}
+function tick(){ const n = new Date(); document.getElementById('time').textContent = n.toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'}); document.getElementById('date').textContent = n.toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'}); }
+tick(); setInterval(tick, 15000); load(); setInterval(load, 5*60*1000);
+setTimeout(()=>location.reload(), 6*60*60*1000);
+</script>
+</body>
+</html>

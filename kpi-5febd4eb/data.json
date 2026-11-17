@@ -1,0 +1,38 @@
+{
+  "company": "Interactive Suppression Systems",
+  "updated": "2026-11-17",
+  "stage": { "name": "Year 1", "number": 1, "of": 3,
+    "gates": [
+      { "name": "Win rate measured on 12+ tenders", "done": false },
+      { "name": "3 closed jobs within 3 pts of quoted margin", "done": false },
+      { "name": "Monthly P&L reviewed 6 months running", "done": false }
+    ] },
+  "management": [
+    { "name": "Tenders submitted this month", "target": 6, "actual": null, "dir": "min", "unit": "" },
+    { "name": "Tenders through go / no-go", "target": 100, "actual": null, "dir": "min", "unit": "%" },
+    { "name": "Quote turnaround (working days)", "target": 5, "actual": null, "dir": "max", "unit": " d" },
+    { "name": "Tender win rate (rolling 12 mths)", "target": 25, "actual": null, "dir": "min", "unit": "%" },
+    { "name": "Revenue vs plan (month)", "target": 100, "actual": null, "dir": "min", "unit": "%" },
+    { "name": "Margin on closed jobs", "target": 30, "actual": null, "dir": "min", "unit": "%" },
+    { "name": "Jobs within 3 pts of quoted margin", "target": 80, "actual": null, "dir": "min", "unit": "%" },
+    { "name": "Weeks of won work ahead", "target": 8, "actual": null, "dir": "min", "unit": " wks" },
+    { "name": "Invoices overdue 60+ days", "target": 0, "actual": null, "dir": "max", "unit": "" },
+    { "name": "Maintenance contracts this quarter", "target": 1, "actual": null, "dir": "min", "unit": "" },
+    { "name": "New builders qualified this quarter", "target": 1, "actual": null, "dir": "min", "unit": "" }
+  ],
+  "workforce": [
+    { "name": "Heads per crew-hour", "target": 5, "actual": 6.0, "dir": "min", "unit": "", "note": "999 Hay St, measured" },
+    { "name": "Days since last lost-time injury", "target": null, "actual": null, "dir": "info", "unit": "" },
+    { "name": "Safety incidents this month", "target": 0, "actual": null, "dir": "max", "unit": "" },
+    { "name": "Jobs on programme", "target": 100, "actual": null, "dir": "min", "unit": "%" },
+    { "name": "Daily timesheets & logs complete", "target": 100, "actual": null, "dir": "min", "unit": "%" },
+    { "name": "Variations submitted within 7 days", "target": 100, "actual": null, "dir": "min", "unit": "%" },
+    { "name": "Rework call-backs this month", "target": 0, "actual": null, "dir": "max", "unit": "" },
+    { "name": "Toolbox talks this week", "target": 1, "actual": null, "dir": "min", "unit": "" }
+  ],
+  "director": [
+    { "name": "Avg hours / week (4-wk)", "target": 55, "actual": null, "dir": "max", "unit": " h" },
+    { "name": "Full days off this week", "target": 1, "actual": null, "dir": "min", "unit": "" },
+    { "name": "Leave taken this year", "target": 4, "actual": null, "dir": "min", "unit": " wks" }
+  ]
+}
